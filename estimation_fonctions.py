@@ -20,26 +20,44 @@ import nexity_fonctions as nexity
 import lefigaro_fonctions as lefigaro
 
 # Fonctions de l'estimations du prix d'un appartement selon ses caractéristiques
-def get_estimation(Information):
+def get_estimation():
     
-    Information = {"Loyer" : 1000,      # En €
-              "Surface" : 80,      # En m²
-              "Charges": 100,       # En €
-              "Pièces" : 4,        # En nombre
-              "Terrain" : 0,       # En m²
-              "Meublé" : "Non",    # "Oui" ou "Non"
-              "Ascenseur" : "Non", # "Oui" ou "Non"
-              "Balcon" : "Oui",    # "Oui" ou "Non"
-              "Terrasse" : "Non",  # "Oui" ou "Non"
-              "Cave" : "Non",      # "Oui" ou "Non"
-              "Parking" : "Oui",   # "Oui" ou "Non"
-              }
-    
-    dt = basics.import_data("all")
-    
-    a=dt[["Surface", 'Charges', 'Pièces', 'Étage', 'Terrain', 'Meublé', 'Ascenseur', 'Balcon', 'Terrasse','Cave', 'Parking']]
-    b=dt["Loyer"]
+    Information = {"Surface" : "",      # En m²
+                  "Charges": "",       # En €
+                  "Pièces" : "",        # En nombre
+                  "Terrain" : "",       # En m²
+                  "Meublé" : "",    # "Oui" ou "Non"
+                  "Ascenseur" : "", # "Oui" ou "Non"
+                  "Balcon" : "",    # "Oui" ou "Non"
+                  "Terrasse" : "",  # "Oui" ou "Non"
+                  "Cave" : "",      # "Oui" ou "Non"
+                  "Parking" : "",   # "Oui" ou "Non"
+                  }
     key = list(Information.keys())
+    for i in range(len(Information)):
+        print(key[i], ":")
+        element = input().lower()
+        if key[i] == "Loyer" or key[i] == "Surface" or key[i] =="Charges" or key[i] =="Pièces":
+            while element.isnumeric() == False:
+                if element.isnumeric() == False:
+                    print("Erreur : Veuillez insérer une valeur numérique")
+                    element = input()
+            element = float(element)
+        else:
+            while element != "oui" and element != "non":
+                if element != "oui" and element != "non":
+                    print("Erreur : Veuillez indiquer si vous souhaitez cette caractéristique ou non\nRéponses acceptées : Oui ou Non")
+                    element = input().lower()
+            element = element.capitalize()
+        Information[list(Information.keys())[i]]=element
+        
+    dt=basics.import_data("all")
+    
+    a=dt[["Surface", 'Charges', 'Pièces', 'Terrain', 'Meublé', 'Ascenseur', 'Balcon', 'Terrasse','Cave', 'Parking']]
+    b=dt["Loyer"]
+    
+    key = list(Information.keys())
+    
     X = []
     for i in range(len(key)):
         if (Information.get(key[i])=="Oui")==True:
@@ -51,7 +69,7 @@ def get_estimation(Information):
         X.append(ad)
     model = KNeighborsClassifier(n_neighbors=4)
     model.fit(a,b)
-    distances, indices = model.kneighbors([X[1:]])
+    distances, indices = model.kneighbors([X])
     loy = []
     for i in range(len(indices[0])):    
         obs = dt.iloc[indices[0][i]]["Loyer"]
@@ -68,25 +86,39 @@ def get_estimation(Information):
     print("Estimation du prix : ", estimation.round(), "€")
     print("Interval de confiance du prix : ", IC)
     
-# Obtenir 4 annonces proches d'un logement donné
-def get_annonce(Information):
-    
-    Information = {"Loyer" : 1000,      # En €
-              "Surface" : 80,      # En m²
-              "Charges": 100,       # En €
-              "Pièces" : 4,        # En nombre
-              "Terrain" : 0,       # En m²
-              "Meublé" : "Non",    # "Oui" ou "Non"
-              "Ascenseur" : "Non", # "Oui" ou "Non"
-              "Balcon" : "Oui",    # "Oui" ou "Non"
-              "Terrasse" : "Non",  # "Oui" ou "Non"
-              "Cave" : "Non",      # "Oui" ou "Non"
-              "Parking" : "Oui",   # "Oui" ou "Non"
+def get_annonce():
+    Information = {"Loyer" : "",      # En €
+              "Surface" : "",      # En m²
+              "Charges": "",       # En €
+              "Pièces" : "",        # En nombre
+              "Terrain" : "",       # En m²
+              "Meublé" : "",    # "Oui" ou "Non"
+              "Ascenseur" : "", # "Oui" ou "Non"
+              "Balcon" : "",    # "Oui" ou "Non"
+              "Terrasse" : "",  # "Oui" ou "Non"
+              "Cave" : "",      # "Oui" ou "Non"
+              "Parking" : "",   # "Oui" ou "Non"
               }
     
-    dt = basics.import_data("all")
-    
-    a=dt[["Loyer", "Surface", 'Charges', 'Pièces', 'Étage', 'Terrain', 'Meublé', 'Ascenseur', 'Balcon', 'Terrasse','Cave','Parking']]
+    key = list(Information.keys())
+    for i in range(len(Information)):
+        print(key[i], ":")
+        element = input().lower()
+        if key[i] == "Loyer" or key[i] == "Surface" or key[i] =="Charges" or key[i] =="Pièces":
+            while element.isnumeric() == False:
+                if element.isnumeric() == False:
+                    print("Erreur : Veuillez insérer une valeur numérique")
+                    element = input()
+            element = float(element)
+        else:
+            while element != "oui" and element != "non":
+                if element != "oui" and element != "non":
+                    print("Erreur : Veuillez indiquer si vous souhaitez cette caractéristique ou non\nRéponses acceptées : Oui ou Non")
+                    element = input().lower()
+            element = element.capitalize()
+        Information[list(Information.keys())[i]]=element
+    dt=basics.import_data("all")
+    a=dt[["Loyer", "Surface", 'Charges', 'Pièces', 'Terrain', 'Meublé', 'Ascenseur', 'Balcon', 'Terrasse','Cave','Parking']]
     b=dt["Liens"]
     key = list(Information.keys())
     X = []

@@ -17,6 +17,7 @@ from bs4 import BeautifulSoup
 import orpi_fonctions as orpi
 import nexity_fonctions as nexity
 import lefigaro_fonctions as lefigaro
+import basics_fonctions as basics
 
 # Fonction pour avoir la le code html pour une page internet quelconque
 def get_page(urlpage):

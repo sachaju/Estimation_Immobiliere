@@ -6,6 +6,9 @@ import pandas as pd
 import numpy as np
 import requests
 from bs4 import BeautifulSoup
+import orpi_fonctions as orpi
+import nexity_fonctions as nexity
+import lefigaro_fonctions as lefigaro
 import basics_fonctions as basics
 
 # a) Type : appartement ou maison
