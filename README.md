@@ -15,6 +15,7 @@ Objectifs :
 5) `estimation_immobilier_fonctions.py` : Regroupement des fonctions `estimation()` et `annonces()`
 
 ## Libraries nécessaires :  
+- requests
 - pandas  
 - numpy  
 - bs4
