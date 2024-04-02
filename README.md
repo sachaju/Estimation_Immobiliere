@@ -18,7 +18,7 @@ Objectifs :
 - pandas  
 - numpy  
 - bs4
-- sklearn
+- scikit-learn
 - scipy 
 
 ## Guide d'utilisation :  
