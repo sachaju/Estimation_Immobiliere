@@ -14,6 +14,18 @@ Objectifs :
 4) `lefigaro_fonctions.py` : Regroupement des fonctions pour obtenir les différentes caractéristiques des logements des annonces du site Lefigaro immobilier
 5) `estimation_immobilier_fonctions.py` : Regroupement des fonctions `estimation()` et `annonces()`
 
+## Libraries nécessaires : 
+- random  
+- re  
+- functools  
+- time  
+- requests  
+- pandas  
+- numpy  
+- BeautifulSoup (bs4)  
+- KNeighborsClassifier (sklearn.neighbors)  
+- norm (scipy.stats)  
+
 ## Guide d'utilisation :  
 
 1) Estimer le prix d'un bien immobilier selon ses caractéristiques
