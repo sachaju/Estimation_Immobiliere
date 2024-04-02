@@ -1,17 +1,14 @@
 import random
 import re
-import seaborn as sns
-import pandas as pd
-import numpy as np
 import requests
-import matplotlib.pyplot as plt
-from bs4 import BeautifulSoup
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import train_test_split
-from scipy.spatial import cKDTree
-from scipy.stats import norm
 import functools
 import time
+
+import pandas as pd
+import numpy as np
+
+from bs4 import BeautifulSoup
+
 import basics_estimations_fonctions as basics
 import orpi_fonctions as orpi
 import nexity_fonctions as nexity

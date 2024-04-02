@@ -1,16 +1,9 @@
-import time 
-import random
-import re
-import seaborn as sns
 import pandas as pd
 import numpy as np
-import requests
-import matplotlib.pyplot as plt
-from bs4 import BeautifulSoup
+
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import train_test_split
-from scipy.spatial import cKDTree
 from scipy.stats import norm
+
 import basics_estimations_fonctions as basics
 import orpi_fonctions as orpi
 import nexity_fonctions as nexity
@@ -28,12 +21,13 @@ def estimation():
                   "Avez-vous un balcon ?" : "",   
                   "Avez-vous une terrasse ?" : "", 
                   "Avez-vous une cave ?" : "",   
-                  "Avez-vous une place de statonnement (parking ou garage) ?" : "",
+                  "Avez-vous une place de stationnement (parking ou garage) ?" : "",
                   }
     
     key = list(Information.keys())
-    print("Demande d'informations :\n")
+    print("Renseignement des caractéristiques du logement :\n")
 
+    # Affichage de la demande d'information
     for i in range(len(Information)):
         print(key[i], ":")
         element = input().lower()
@@ -51,41 +45,49 @@ def estimation():
             element = element.capitalize()
         Information[list(Information.keys())[i]]=element
 
+    # importation des données des logements
     dt = basics.data_immo("all")    
-    a=dt[["Surface", 'Pièces', 'Terrain', 'Ascenseur', 'Balcon', 'Terrasse', 'Cave', 'Parking']]
-    b=dt["Prix"]
+    x=dt[["Surface", 'Pièces', 'Terrain', 'Ascenseur', 'Balcon', 'Terrasse', 'Cave', 'Parking']]
+    y=dt["Prix"]
     
+    # Transformation des variables d'inforamtion de text en boolean et stockage dans X
     X = []
     for i in range(len(key)):
         if (Information.get(key[i])=="Oui")==True:
-            ad = 1
+            info = 1
         elif (Information.get(key[i])=="Non")==True:
-            ad = 0
+            info = 0
         else :
-            ad = Information.get(key[i])
-        X.append(ad)
-    X = pd.DataFrame([X], columns=a.columns)
+            info = Information.get(key[i])
+        X.append(info)
+    X = pd.DataFrame([X], columns=x.columns)
+    
+    # Entrainement du modèle knn
     model = KNeighborsClassifier(n_neighbors=4)
-    model.fit(a,b)
+    model.fit(x,y)
     distances, indices = model.kneighbors(X)
     
-    loy = []
+    # Estimation du prix
+    prix = []
     for i in range(len(indices[0])):    
         obs = dt.iloc[indices[0][i]]["Prix"]
-        loy.append(obs)
-    loy = np.array(loy)
+        prix.append(obs)
+    prix = np.array(prix)
     z = distances.sum()- distances[0]
     sum_z = z.sum()
     pond = z/sum_z
-    estimation = (loy*pond).sum()
+    estimation = (prix*pond).sum()
+    
     # Intervalle de confiance
-    lower_bound = (loy*pond).sum() -  norm.ppf((1.95) / 2) * (np.std(loy) / np.sqrt(len(loy)))
-    upper_bound = (loy*pond).sum() + norm.ppf((1.95) / 2) * (np.std(loy) / np.sqrt(len(loy)))
-    IC = [lower_bound.round(), upper_bound.round()]
+    lower_bound = (prix*pond).sum() -  norm.ppf((1.95) / 2) * (np.std(prix) / np.sqrt(len(prix)))
+    upper_bound = (prix*pond).sum() + norm.ppf((1.95) / 2) * (np.std(prix) / np.sqrt(len(prix)))
+    
+    # Affichage des résultats de la fonction
     print("")
     print("Estimation du prix : ", "{:,}".format(estimation.round()).replace(","," "), "€")
-    print("Interval de confiance du prix : [","{:,}".format(lower_bound.round()).replace(","," "), "€", ";","{:,}".format(upper_bound.round()).replace(","," "), "€", "]")     
-        
+    print("Interval de confiance du prix : [","{:,}".format(lower_bound.round()).replace(","," "), "€", ";","{:,}".format(upper_bound.round()).replace(","," "), "€", "]")  
+    
+    
 def annonces():
     """
     Fonctions qui permet d'obtenir une liste d'annonces selon des caractéristiques spécifiées.
@@ -93,7 +95,7 @@ def annonces():
     # Demandes informations
     Information ={"Quel est le prix que vous visez ?" : "",
                   "Quelle surface souhaitez-vous ? (en m²)" : "",  
-                  "Combien de pièces souhiatez-vous ?" : "",        
+                  "Combien de pièces souhaitez-vous ?" : "",        
                   "Souhaitez-vous du terrain ?" : "",
                   "Souhaitez-vous un ascenseur ?" : "", 
                   "Souhaitez-vous un balcon ?" : "",   
@@ -103,8 +105,9 @@ def annonces():
                   }
     
     key = list(Information.keys())
-    print("Demande d'informations :\n")
-
+    print("Renseignement des caractéristiques souhaitées :\n")
+    
+    # Affichage de la demande d'information
     for i in range(len(Information)):
         print(key[i], ":")
         element = input().lower()
@@ -121,32 +124,36 @@ def annonces():
                     element = input().lower()
             element = element.capitalize()
         Information[list(Information.keys())[i]]=element
-
-    dt = basics.data_immo("all")     
-    a=dt[["Prix", "Surface", 'Pièces', 'Terrain', 'Ascenseur', 'Balcon', 'Terrasse','Cave','Parking']]
-    b=dt["Liens"]
     
+    # importation des données des logements
+    dt = basics.data_immo("all")
+    x=dt[["Prix", "Surface", 'Pièces', 'Terrain', 'Ascenseur', 'Balcon', 'Terrasse','Cave','Parking']]
+    y=dt["Liens"]
+    
+    # Transformation des variables d'inforamtion de text en boolean et stockage dans X
     X = []
     for i in range(len(key)):
         if (Information.get(key[i])=="Oui")==True:
-            ad = 1
+            info = 1
         elif (Information.get(key[i])=="Non")==True:
-            ad = 0
+            info = 0
         else :
-            ad = Information.get(key[i])
-        X.append(ad)
-    X = pd.DataFrame([X], columns=a.columns)
+            info = Information.get(key[i])
+        X.append(info)
+    X = pd.DataFrame([X], columns=x.columns)
+    
+    # Entrainement du modèle knn
     model = KNeighborsClassifier(n_neighbors=4)
-    model.fit(a,b)
+    model.fit(x,y)
     distances, indices = model.kneighbors(X)
     
-    la = dt.iloc[indices[0]][["Liens", "Prix", "Surface", "Pièces", "Quartier", "Honoraires"]]
-
-    for i in range(len(la)):
-        if la.iloc[i][4]=="nan":
+    # Affichage des résultats de la fonction
+    resultats = dt.iloc[indices[0]][["Liens", "Prix", "Surface", "Pièces", "Quartier", "Honoraires"]]
+    for i in range(len(resultats)):
+        if resultats.iloc[i][4]=="nan":
             quart = "Non renseigné"
         else:
-            quart = la.iloc[i][4]
+            quart = resultats.iloc[i][4]
         print("\nAnnonce",i+1,":")
         print("Quartier : ", quart)
-        print("Prix : ", int(la.iloc[i][1]), "€\n" "Honoraires : ", la.iloc[i][5], "€\n" "Surface : ", la.iloc[i][2], "m2","\n" "Pièces : ", int(la.iloc[i][3]),"\n" "Lien : ", la.iloc[i][0])
+        print("Prix : ", int(resultats.iloc[i][1]), "€\n" "Honoraires : ", resultats.iloc[i][5], "€\n" "Surface : ", resultats.iloc[i][2], "m2","\n" "Pièces : ", int(resultats.iloc[i][3]),"\n" "Lien : ", resultats.iloc[i][0])
