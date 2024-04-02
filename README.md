@@ -17,9 +17,9 @@ Objectifs :
 ## Libraries nécessaires :  
 - pandas  
 - numpy  
-- BeautifulSoup (bs4)  
-- KNeighborsClassifier (sklearn.neighbors)  
-- norm (scipy.stats)  
+- bs4
+- sklearn
+- scipy 
 
 ## Guide d'utilisation :  
 
